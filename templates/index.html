@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            var socket = io();
+            socket.on('connect', function() {
+                data = "test"
+                socket.emit('my_event', data);
+                console.log('Step 1');
+                $('h1').text(data);  
+                socket.emit('custom_event',data);
+                console.log(data);
+                $('#list').text(data[0]+', ' + data[1]);
+            });
+            socket.on('my_event', function(data) {
+                console.log(data);
+                $('h1').text(data);                   
+            });
+            socket.on('custom_event',function(data){
+                console.log(data);
+                $('#list').text('Poop');
+            });
+        </script>
+        <p id='list'>{{myList}}</p>
+        <h1></h1>
+        <div id='butt'>
+            Click me!
+        </div>
+        <img value='4D' src="{{url_for('static',filename='images/testImage.png')}}"/>
+        <img value={{myList[0]}} src="{{url_for('static',filename='Cards/'+ myList[1] + '.png')}}"/>
+        <script type="text/javascript" charset="utf-8">
+            $("#butt").click(function(){
+                alert('button clicked!');
+                data = "I clicked the button"
+                socket.emit('my_button',data);
+            });
+            $("img").click(function(){
+                data = "I clicked the button: " + $(this).attr('value');
+                socket.emit('my_button',data);
+            });
+        </script>
+    </body>
+</html>
