@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    </head>
+    <body>
+        <p>Name: {{data['username']}}</p>
+        <p>Room: {{data.room}}</p>
+        <div id='chat-window'>
+            <input id='message' placeholder="message" value='test'/>
+            <button id='send'>Send</button>
+            <p id='myP'></p>
+        </div>
+        <script type="text/javascript" charset="utf-8">
+            var socket = io.connect('http://127.0.0.1:5000');
+            var message = document.getElementById('message');
+            var output = document.getElementById('myP');
+            btn = document.getElementById('send');
+            btn.addEventListener('click',function(){
+                var message = document.getElementById('message').value;
+                console.log(message)
+                socket.emit('my_event',message)
+            });
+            socket.on('my_event',function(data){
+                output.innerHTML = data
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <h1>Oh Hell</h1>
+        <h3>Username: {{name}}</h3>
+        <h3>Trump:</h3>
+        <h3>Score: </h3>
+        <div>
+            <img id='playedStack' src="{{url_for('static',filename='Cards/gray_back.png')}}" width="138" height="211"/>
+        </div>
+        <div>
+            <button id='deal'>Deal Cards</button>
+        </div>
+        <div id='imageArray'>
+        </div>
+        <script type="text/javascript" charset="utf-8">
+            var q = "data={{name}}"
+            var socket = io.connect('http://sarahsaidwhat.com',{ query: q });
+            btn2 = document.getElementById('deal');
+            btn2.addEventListener('click',function(){
+                console.log("Asking Server to deal");
+                socket.emit('dealCards');
+            });
+            socket.on('my_event',function(data){
+                output.innerHTML = data;
+            });
+            socket.on('dealCards',function(data){
+                //btn2.disabled = true;
+                var imageArray = document.getElementById('imageArray');
+                var newCard = document.createElement('img');
+                var base = "static/Cards/";
+                var ext = ".png";
+                newCard.src = base+data+ext;
+                newCard.value = data;
+                newCard.width = 138;
+                newCard.height = 211;
+                newCard.className = 'card'
+                console.log(data)
+                imageArray.appendChild(newCard)
+                newCard.addEventListener('click',function(){
+                    this.remove();
+                    socket.emit('playCard',newCard.value);
+                });
+            });
+            socket.on('playCard',function(data){
+                var stack = document.getElementById('playedStack')
+                var base = "static/Cards/";
+                var ext = ".png";
+                stack.src = base + data + ext;
+            });
+        </script>
+    </body>
+</html>
